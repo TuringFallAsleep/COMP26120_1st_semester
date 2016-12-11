@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
 			randomize();
 			int k = rand()%p;
 			result = fme(g,p,k);
-
+			break;
 		case d: 
 		case k: 
 			printf("Type private key: \n");
