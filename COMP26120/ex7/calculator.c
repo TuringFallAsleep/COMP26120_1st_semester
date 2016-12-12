@@ -18,9 +18,10 @@ unsigned long hcf(unsigned long a, unsigned long b){
         result = a % b;
         return hcf(b,result);
     }
-    printf("This is in hcf\n");
     return result;
 }
+
+// Time complexity O(n), because every loop we compare a & b twice, we have at most [log a] + 1 loops;
 
 unsigned long fme(unsigned long g,unsigned long p,int x){
     unsigned long s=1;
@@ -33,6 +34,8 @@ unsigned long fme(unsigned long g,unsigned long p,int x){
     }
     return s;
 }
+
+// Time comoplexity O(n), 
 
 unsigned long dl(unsigned long y, unsigned long g, unsigned long p){
     unsigned long i = 0;
@@ -47,11 +50,15 @@ unsigned long dl(unsigned long y, unsigned long g, unsigned long p){
     return 0;
 }
 
+// Time complexity is O(2^n).
+
 unsigned long imp(unsigned long y, unsigned long p){
     unsigned long x = 0;
     x = fme(y,p,p-2);
     return x;
 }
+
+// Time comoplexity O(n).
 
 
 int main(int argc, char const *argv[])
@@ -82,7 +89,6 @@ int main(int argc, char const *argv[])
                 scanf("%lu",&y);
                 srand((unsigned)time(NULL));
                 k = (unsigned long)rand()%(p-1);
-                printf("%lu\n", k);
                 a = fme(g,p,k);
                 b = M*fme(y,p,k)%p;
                 printf("Type recipient’s public key: (%lu,%lu)\n",a,b);
@@ -98,7 +104,7 @@ int main(int argc, char const *argv[])
                 M = b*imp(s,p)%p;
                 // k = dl(a,g,p);
                 // printf("%lu\n", k);
-                printf("The decrypted secret is: %lu\n s = %lu, h = %lu", M, s, imp(s,p));
+                printf("The decrypted secret is: %lu\n", M);
                 break;
             case 'k': 
                 printf("Type private key: ");
