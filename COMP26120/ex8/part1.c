@@ -164,7 +164,7 @@ void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b)){
   R = (B *)malloc((n-mid)*sizeof(B));
 
   for(i=0;i<mid;i++) L[i] = currentList[i];
-  for(i=mid;i<n;i++) R[i] = currentList[i];
+  for(i=mid;i<n;i++) R[i-mid] = currentList[i];
 
 
   mySort(L,mid,compar);
