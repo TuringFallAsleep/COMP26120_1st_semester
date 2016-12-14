@@ -99,13 +99,25 @@ int comp_on_price(const void *a, const void *b)
   }  
 }
 
+void annaWantABook(int N){
+  int i;
+  int thisBook;
+  int cheapest = 100;
+  for(i=N-1;i>=N-20;i--){
+    if(list[i].rating==5 && list[i].relevance>9.5){
+      if(list[i].price < cheapest){
+        cheapest = list[i].price;
+        thisBook = list[i].ID;
+      }
+    }
+  }
+  printf("The book with ID: %d is what Anna wants.\n", thisBook);
+}
+
 void user_interface(int N)
 {
 
   // For Part 1 this function calls the sort function to sort on Price only
-
-  
-  
 
   // For Part 2 this function
   // (1) asks the user if they would like to sort their search results
@@ -138,13 +150,11 @@ void user_interface(int N)
     for (int i=0; i<3; i++){
       for (int j=0; j<3; j++){
         if(!strncmp(key[i],option[j],1)) compOrder[i] = comp[j];
-        printf("%d\n", comp[i]);
       }
     }
 
     for(int k=2; k>=0;k--){
       ptrComp = compOrder[k];
-      // printf("%s\n", );
       mySort(list,N,ptrComp);
     }
 
@@ -159,6 +169,8 @@ void user_interface(int N)
   }
   }
   
+  
+
   return;
 
 }
@@ -174,7 +186,7 @@ void myMerge(B *currentList, B *L, int leftCount, B *R, int rightCount, int(*com
   i=j=k=0;
 
   while (i<leftCount && j<rightCount){
-    if(compar(&L[i],&R[j])==1) currentList[k++] = L[i++];
+    if(compar(&L[i],&R[j])<=0) currentList[k++] = L[i++];
     else currentList[k++] = R[j++];
   }
 
@@ -248,6 +260,8 @@ int main(int argc, char *argv[])
   user_interface(N);
   
   print_results(N);
+
+  annaWantABook(N);
 
   free(list);
 
