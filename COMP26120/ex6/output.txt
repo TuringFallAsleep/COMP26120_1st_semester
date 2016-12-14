@@ -1,8 +1,0 @@
-Object: [Nothing]
-Question: has tail?
-
-Object: pangolin
-Question: [Nothing]
-Object: pete
-
-Question: [Nothing]
