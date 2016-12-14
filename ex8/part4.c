@@ -11,6 +11,9 @@ typedef struct book
   double price;
   double relevance;
   int ID;
+  int salesRank;
+  char *author;
+  char *title;
 } B;
 
 B *list;
@@ -23,11 +26,13 @@ int read_file(char *infile, int N)
   int c;
   if((fp=fopen(infile, "rb")))
     {
-      fscanf(fp, "%*s\t%*s\t%*s\t%*s\n");
+      fscanf(fp, "%*s\t%*s\t%*s\t%*s\t%*s\t%*s\t%*s\n");
       c=0;
       while((!feof(fp))&&(c<N))
   {
-    fscanf(fp, "%lf\t%lf\t%lf\t%d\n", &list[c].rating,  &list[c].price, &list[c].relevance, &list[c].ID);   
+    list[c].author = (char*)malloc(50);
+    list[c].title = (char*)malloc(50);
+    fscanf(fp, "%lf\t%lf\t%lf\t%d\t%d\t%s\t%s\n", &list[c].rating,  &list[c].price, &list[c].relevance, &list[c].ID, &list[c].salesRank, list[c].author, list[c].title);   
     c++;
   }
       fclose(fp);      
@@ -99,6 +104,66 @@ int comp_on_price(const void *a, const void *b)
   }  
 }
 
+int comp_on_sales_rank(const void *a, const void *b)
+{
+  if ((*(B *)a).salesRank < (*(B *)b).salesRank)
+  {  
+     return -1;
+  }
+    else 
+  {
+    if ((*(B *)a).salesRank > (*(B *)b).salesRank)
+    {
+      return 1;
+    }
+      else
+    {
+      return 0;
+    }
+  }  
+}
+
+int comp_on_author(const void *a, const void *b)
+{
+ 
+  if (strcmp((*(B *)a).author, (*(B *)b).author)<0) // (*(B *)a).author < (*(B *)b).author
+  { 
+     return 1;
+  }
+     else 
+  {
+     if (strcmp((*(B *)a).author, (*(B *)b).author)>0)
+     {
+       return -1;
+     }
+       else
+     {
+       return 0;
+     }
+  }  
+}
+
+int comp_on_title(const void *a, const void *b)
+{
+ 
+  if (strcmp((*(B *)a).title, (*(B *)b).title)<0) // (*(B *)a).title < (*(B *)b).title
+  { 
+     return 1;
+  }
+     else 
+  {
+     if (strcmp((*(B *)a).title, (*(B *)b).title)>0) // (*(B *)a).title > (*(B *)b).title
+     {
+       return -1;
+     }
+       else
+     {
+       return 0;
+     }
+  }  
+}
+
+
 void annaWantABook(int N){
   int i;
   int thisBook;
@@ -125,35 +190,44 @@ void user_interface(int N)
   // (3) calls your sort function
   char str[10];
   char key[3][10];
-  char option[3][10] = {"Stars","Price","Relv"};
+  char option[6][10] = {"stars","price","relv","saleRank","author","title"};
   int(*ptrComp)(const void *, const void *);
-  int(*comp[3])(const void *, const void *);
+  int(*comp[6])(const void *, const void *);
   comp[0] = comp_on_rating;
   comp[1] = comp_on_price;
   comp[2] = comp_on_relev;
+  comp[3] = comp_on_sales_rank;
+  comp[4] = comp_on_author;
+  comp[5] = comp_on_title;
   int flag = 1;
   while(flag){
     printf("Do you want do a lexicographic sort?\n");
     fgets(str,10,stdin);
   if (!strncmp(str,"y",1)){
-    printf("Please input the most important key (from Stars,Price,Relv): ");
+    printf("Please input the most important key (from stars,price,relv,salesRank,author,title): ");
     fgets(key[0],10,stdin);
-    printf("Please input the second important key (from Stars,Price,Relv): ");
+    printf("Please input the second important key (from stars,price,relv,salesRank,author,title): ");
     fgets(key[1],10,stdin);
-    printf("Please input the last important key (from Stars,Price,Relv): ");
+    printf("Please input the third important key (from stars,price,relv,salesRank,author,title): ");
     fgets(key[2],10,stdin);
+    // printf("Please input the fourth important key (from Stars,Price,Relv,salesRank,Author,Title): ");
+    // fgets(key[3],10,stdin);
+    // printf("Please input the fifth important key (from Stars,Price,Relv,salesRank,Author,Title): ");
+    // fgets(key[4],10,stdin);
+    // printf("Please input the last important key (from Stars,Price,Relv,salesRank,Author,Title): ");
+    // fgets(key[5],10,stdin);
+
 
 
     int(*compOrder[3])(const void *, const void *);
 
-
     for (int i=0; i<3; i++){
-      for (int j=0; j<3; j++){
-        if(!strncmp(key[i],option[j],1)) compOrder[i] = comp[j];
+      for (int j=0; j<6; j++){
+        if(!strncmp(key[i],option[j],2)) compOrder[i] = comp[j];
       }
     }
 
-    for(int k=2; k>=0;k--){
+    for(int k=5; k>=0;k--){
       ptrComp = compOrder[k];
       mySort(list,N,ptrComp);
     }
@@ -168,7 +242,6 @@ void user_interface(int N)
     printf("Wrong input!\n");
   }
   }
-  
   
 
   return;
@@ -226,8 +299,8 @@ void print_results(int N)
     {
       for(i=N-1;i>=N-20;i--)
       {  
-    printf("%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
-    fprintf(fp, "%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
+    printf("%g\t%g\t%g\t%d\t%d\t%s\t%s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);
+    fprintf(fp, "%g\t%g\t%g\t%d\t%d\t%s\t%s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);
     
       }
       fclose(fp);
@@ -256,12 +329,24 @@ int main(int argc, char *argv[])
   list = (B *)malloc(N*sizeof(B));
   
   N=read_file(argv[2], N);
-  
+  int i = 0;
+  for (i=0;i<10;i++){
+      printf("%g %g %g %d %d %s %s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);
+
+  }
+
   user_interface(N);
   
   print_results(N);
 
-  annaWantABook(N);
+  //annaWantABook(N);
+  
+  int index;
+  for (index = 0; index < N; index++)
+  {
+    free(list[index].author);
+    free(list[index].title);
+  }
 
   free(list);
 

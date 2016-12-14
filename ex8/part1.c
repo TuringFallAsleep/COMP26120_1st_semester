@@ -112,7 +112,6 @@ void user_interface(int N)
   // (2) asks for the most important field (or key), the next most etc
   // (3) calls your sort function
   
-
 }
 
 // L is the left part of the list, R is the right part of the list.
@@ -126,7 +125,7 @@ void myMerge(B *currentList, B *L, int leftCount, B *R, int rightCount, int(*com
   i=j=k=0;
 
   while (i<leftCount && j<rightCount){
-    if(compar(&L[i],&R[j])==1) currentList[k++] = L[i++];
+    if(compar(&L[i],&R[j])<=0) currentList[k++] = L[i++];
     else currentList[k++] = R[j++];
   }
 
@@ -205,3 +204,5 @@ int main(int argc, char *argv[])
 
   return(0);
 }
+
+//Reference: https://gist.github.com/mycodeschool/9678029

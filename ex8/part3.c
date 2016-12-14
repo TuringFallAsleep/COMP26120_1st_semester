@@ -15,7 +15,7 @@ typedef struct book
 
 B *list;
 
-void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b));
+// void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b));
 
 
 int read_file(char *infile, int N)
@@ -155,7 +155,8 @@ void user_interface(int N)
 
     for(int k=2; k>=0;k--){
       ptrComp = compOrder[k];
-      mySort(list,N,ptrComp);
+      // mySort(list,N,,ptrComp);
+      qsort(list,N,sizeof(B),ptrComp);
     }
 
     return;
@@ -178,45 +179,47 @@ void user_interface(int N)
 // L is the left part of the list, R is the right part of the list.
 // leftCount is number of element in L;
 // rightCOunt is number of element in R.
-void myMerge(B *currentList, B *L, int leftCount, B *R, int rightCount, int(*compar)(const void *a, const void *b)){
-  int i,j,k;
-  // i - to mark the index of left list (L)
-  // j - to mark the index of left list (R)
-  // k - to mark the index of left list (A)
-  i=j=k=0;
+// void myMerge(B *currentList, B *L, int leftCount, B *R, int rightCount, int(*compar)(const void *a, const void *b)){
+//   int i,j,k;
+//   // i - to mark the index of left list (L)
+//   // j - to mark the index of left list (R)
+//   // k - to mark the index of left list (A)
+//   i=j=k=0;
 
-  while (i<leftCount && j<rightCount){
-    if(compar(&L[i],&R[j])<=0) currentList[k++] = L[i++];
-    else currentList[k++] = R[j++];
-  }
+//   while (i<leftCount && j<rightCount){
+//     if(compar(&L[i],&R[j])<=0) currentList[k++] = L[i++];
+//     else currentList[k++] = R[j++];
+//   }
 
-  while (i < leftCount) currentList[k++] = L[i++];
-  while (j < rightCount) currentList[k++] = R[j++];
+//   while (i < leftCount) currentList[k++] = L[i++];
+//   while (j < rightCount) currentList[k++] = R[j++];
 
-}
+// }
 
-void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b)){
-  int mid,i;
-  B *L,*R;
-  if(n < 2) return;
-  mid = n/2; // find the mid index
+// void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b)){
+//   int mid,i;
+//   B *L,*R;
+//   if(n < 2) return;
+//   mid = n/2; // find the mid index
 
-  // create left and right subarrays
-  // mid elements (from index 0 to mid-1) should be the left part of the sub-list
-  // (n-mid) elements (form mid to n-1) should be the right part of the sub-list
-  L = (B *)malloc(mid*sizeof(B));
-  R = (B *)malloc((n-mid)*sizeof(B));
+//   // create left and right subarrays
+//   // mid elements (from index 0 to mid-1) should be the left part of the sub-list
+//   // (n-mid) elements (form mid to n-1) should be the right part of the sub-list
+//   L = (B *)malloc(mid*sizeof(B));
+//   R = (B *)malloc((n-mid)*sizeof(B));
 
-  for(i=0;i<mid;i++) L[i] = currentList[i];
-  for(i=mid;i<n;i++) R[i-mid] = currentList[i];
+//   for(i=0;i<mid;i++) L[i] = currentList[i];
+//   for(i=mid;i<n;i++) R[i-mid] = currentList[i];
 
 
-  mySort(L,mid,compar);
-  mySort(R,n-mid,compar);
-  myMerge(currentList,L,mid,R,n-mid,compar);
-  free(L);
-  free(R);
-}
+//   mySort(L,mid,compar);
+//   mySort(R,n-mid,compar);
+//   myMerge(currentList,L,mid,R,n-mid,compar);
+//   free(L);
+//   free(R);
+// }
+
+
  
 
 void print_results(int N)

@@ -1,0 +1,1 @@
+sort -nk 2,2 -s Wodehouse.txt | sort -nrk 3,3 -s | sort -nrk 1,1 -s | head -20
