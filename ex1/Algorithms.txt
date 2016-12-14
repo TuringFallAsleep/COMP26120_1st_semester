@@ -1,0 +1,48 @@
+// Problem B. Max and Min of a List
+
+  
+//Algorithms one
+find_max_and min_in_the_list (list)
+{
+  max = the first element of the list;
+  min = the last element of the list;
+  i = the position of the number in list except the first and the last;
+  if max < min
+   exchange the values of max and min
+  for each i in the list
+    if max < A[i]
+     max = A[i] 
+    if min > A[i]
+     min = A[i]
+   end for
+ output: max, min
+}
+//Why correct: every element of the list is compared. max and min will compare to A[i] in the same loop, at same time, max and min will get thire value.
+//The number of operations: 2*(n-1)-1. Only use one loop, and reduce one operation.
+
+
+//Algorithms two
+ind_max_and min_in_the_list (A[0..n-1])
+{
+  copy A[0..(n/2)-1] to B[0..(n/2)-1]
+  copy A[(n/2)..n-1] to C[0..(n/2)-1]
+  Mergesort(B[0..(n/2)-1])
+  Mergesort(C[0..(n/2)-1])// divide to 2 elements
+  Merge(B,A,C)
+}
+Merge(B[0..p-1],C[0..q-1],A[0..p+q-1])
+{
+  for (i<p and j<q)
+    {
+     if B[i] <= C[j]
+       A[k] = B[i]; i++ 
+    else A[k] = C[j]; j++ //merge two arrays
+    k++
+    }
+    if i = p
+      copy C[j..q-1] to A[k..p+q-1] // merge the rest elements in one array
+    else copy B[i..p-1] to A[k..p+q-1] 
+}
+//Why correct: seprate the array to two subarrays, and continue do this until every array only has two elements, which only needs one operation to compare. Sort every two-element-array needs n/2 operations, if there is a one-element-array, it doesn't need compare.   
+//The number of operations: depend on the list, but shoul less than the first algorithm
+
