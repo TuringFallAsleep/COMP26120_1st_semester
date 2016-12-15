@@ -226,8 +226,8 @@ void print_results(int N)
     {
       for(i=N-1;i>=N-20;i--)
       {  
-    printf("%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
-    fprintf(fp, "%g %g %g %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
+    printf("%g\t%g\t%g\t%d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
+    fprintf(fp, "%g\t%g\t%g\t%d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
     
       }
       fclose(fp);

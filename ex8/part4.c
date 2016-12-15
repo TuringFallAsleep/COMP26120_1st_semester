@@ -32,7 +32,7 @@ int read_file(char *infile, int N)
   {
     list[c].author = (char*)malloc(50);
     list[c].title = (char*)malloc(50);
-    fscanf(fp, "%lf\t%lf\t%lf\t%d\t%d\t%s\t%s\n", &list[c].rating,  &list[c].price, &list[c].relevance, &list[c].ID, &list[c].salesRank, list[c].author, list[c].title);   
+    fscanf(fp, "%lf\t%lf\t%lf\t%d\t%d\t%s\t%s\n", &list[c].rating,  &list[c].price, &list[c].relevance, &list[c].ID, &list[c].salesRank, list[c].author, list[c].title ); //  
     c++;
   }
       fclose(fp);      
@@ -108,13 +108,13 @@ int comp_on_sales_rank(const void *a, const void *b)
 {
   if ((*(B *)a).salesRank < (*(B *)b).salesRank)
   {  
-     return -1;
+     return 1;
   }
     else 
   {
     if ((*(B *)a).salesRank > (*(B *)b).salesRank)
     {
-      return 1;
+      return -1;
     }
       else
     {
@@ -190,9 +190,9 @@ void user_interface(int N)
   // (3) calls your sort function
   char str[10];
   char key[3][10];
-  char option[6][10] = {"stars","price","relv","saleRank","author","title"};
+  char option[6][10] = {"stars","price","relv","saleRank","author","title"}; // 6  
   int(*ptrComp)(const void *, const void *);
-  int(*comp[6])(const void *, const void *);
+  int(*comp[6])(const void *, const void *);//6
   comp[0] = comp_on_rating;
   comp[1] = comp_on_price;
   comp[2] = comp_on_relev;
@@ -222,12 +222,12 @@ void user_interface(int N)
     int(*compOrder[3])(const void *, const void *);
 
     for (int i=0; i<3; i++){
-      for (int j=0; j<6; j++){
+      for (int j=0; j<6; j++){ //6
         if(!strncmp(key[i],option[j],2)) compOrder[i] = comp[j];
       }
     }
 
-    for(int k=5; k>=0;k--){
+    for(int k=2; k>=0;k--){ 
       ptrComp = compOrder[k];
       mySort(list,N,ptrComp);
     }
@@ -299,8 +299,8 @@ void print_results(int N)
     {
       for(i=N-1;i>=N-20;i--)
       {  
-    printf("%g\t%g\t%g\t%d\t%d\t%s\t%s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);
-    fprintf(fp, "%g\t%g\t%g\t%d\t%d\t%s\t%s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);
+    printf("%g\t%g\t%g\t%d\t%d\t%s\t%s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);//  
+    fprintf(fp, "%g\t%g\t%g\t%d\t%d\t%s\t%s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);//  
     
       }
       fclose(fp);
@@ -329,17 +329,14 @@ int main(int argc, char *argv[])
   list = (B *)malloc(N*sizeof(B));
   
   N=read_file(argv[2], N);
-  int i = 0;
-  for (i=0;i<10;i++){
-      printf("%g %g %g %d %d %s %s\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].salesRank, list[i].author, list[i].title);
-
-  }
 
   user_interface(N);
   
+  annaWantABook(N);
+
   print_results(N);
 
-  //annaWantABook(N);
+  
   
   int index;
   for (index = 0; index < N; index++)

@@ -11,11 +11,12 @@ typedef struct book
   double price;
   double relevance;
   int ID;
+  int sale;
 } B;
 
 B *list;
 
-// void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b));
+void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b));
 
 
 int read_file(char *infile, int N)
@@ -23,11 +24,11 @@ int read_file(char *infile, int N)
   int c;
   if((fp=fopen(infile, "rb")))
     {
-      fscanf(fp, "%*s\t%*s\t%*s\t%*s\n");
+      fscanf(fp, "%*s\t%*s\t%*s\t%*s\t%*s\n");
       c=0;
       while((!feof(fp))&&(c<N))
   {
-    fscanf(fp, "%lf\t%lf\t%lf\t%d\n", &list[c].rating,  &list[c].price, &list[c].relevance, &list[c].ID);   
+    fscanf(fp, "%lf\t%lf\t%lf\t%d\t%d\n", &list[c].rating,  &list[c].price, &list[c].relevance, &list[c].ID, &list[c].sale);   
     c++;
   }
       fclose(fp);      
@@ -99,6 +100,26 @@ int comp_on_price(const void *a, const void *b)
   }  
 }
 
+int comp_on_sale(const void *a, const void *b)
+{
+ 
+  if ((*(B *)a).sale < (*(B *)b).sale)
+  { 
+     return 1;
+  }
+     else 
+  {
+     if ((*(B *)a).sale > (*(B *)b).sale)
+     {
+       return -1;
+     }
+       else
+     {
+       return 0;
+     }
+  }  
+}
+
 void annaWantABook(int N){
   int i;
   int thisBook;
@@ -125,7 +146,7 @@ void user_interface(int N)
   // (3) calls your sort function
   char str[10];
   char key[3][10];
-  char option[3][10] = {"Stars","Price","Relv"};
+  char option[3][10] = {"stars","price","relv","sale"};
   int(*ptrComp)(const void *, const void *);
   int(*comp[3])(const void *, const void *);
   comp[0] = comp_on_rating;
@@ -136,11 +157,11 @@ void user_interface(int N)
     printf("Do you want do a lexicographic sort?\n");
     fgets(str,10,stdin);
   if (!strncmp(str,"y",1)){
-    printf("Please input the most important key (from Stars,Price,Relv): ");
+    printf("Please input the most important key (from stars,price,relv,sale): ");
     fgets(key[0],10,stdin);
-    printf("Please input the second important key (from Stars,Price,Relv): ");
+    printf("Please input the second important key (from stars,price,relv,sale): ");
     fgets(key[1],10,stdin);
-    printf("Please input the last important key (from Stars,Price,Relv): ");
+    printf("Please input the last important key (from stars,price,relv,sale): ");
     fgets(key[2],10,stdin);
 
 
@@ -148,15 +169,14 @@ void user_interface(int N)
 
 
     for (int i=0; i<3; i++){
-      for (int j=0; j<3; j++){
-        if(!strncmp(key[i],option[j],1)) compOrder[i] = comp[j];
+      for (int j=0; j<4; j++){
+        if(!strncmp(key[i],option[j],2)) compOrder[i] = comp[j];
       }
     }
 
     for(int k=2; k>=0;k--){
       ptrComp = compOrder[k];
-      // mySort(list,N,ptrComp);
-      qsort(list,N,sizeof(B),ptrComp);
+      mySort(list,N,ptrComp);
     }
 
     return;
@@ -179,65 +199,64 @@ void user_interface(int N)
 // L is the left part of the list, R is the right part of the list.
 // leftCount is number of element in L;
 // rightCOunt is number of element in R.
-// void myMerge(B *currentList, B *L, int leftCount, B *R, int rightCount, int(*compar)(const void *a, const void *b)){
-//   int i,j,k;
-//   // i - to mark the index of left list (L)
-//   // j - to mark the index of left list (R)
-//   // k - to mark the index of left list (A)
-//   i=j=k=0;
+void myMerge(B *currentList, B *L, int leftCount, B *R, int rightCount, int(*compar)(const void *a, const void *b)){
+  int i,j,k;
+  // i - to mark the index of left list (L)
+  // j - to mark the index of left list (R)
+  // k - to mark the index of left list (A)
+  i=j=k=0;
 
-//   while (i<leftCount && j<rightCount){
-//     if(compar(&L[i],&R[j])<=0) currentList[k++] = L[i++];
-//     else currentList[k++] = R[j++];
-//   }
+  while (i<leftCount && j<rightCount){
+    if(compar(&L[i],&R[j])<=0) currentList[k++] = L[i++];
+    else currentList[k++] = R[j++];
+  }
 
-//   while (i < leftCount) currentList[k++] = L[i++];
-//   while (j < rightCount) currentList[k++] = R[j++];
+  while (i < leftCount) currentList[k++] = L[i++];
+  while (j < rightCount) currentList[k++] = R[j++];
 
-// }
+}
 
-// void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b)){
-//   int mid,i;
-//   B *L,*R;
-//   if(n < 2) return;
-//   mid = n/2; // find the mid index
+void mySort(B *currentList, int n, int(*compar)(const void *a, const void *b)){
+  int mid,i;
+  B *L,*R;
+  if(n < 2) return;
+  mid = n/2; // find the mid index
 
-//   // create left and right subarrays
-//   // mid elements (from index 0 to mid-1) should be the left part of the sub-list
-//   // (n-mid) elements (form mid to n-1) should be the right part of the sub-list
-//   L = (B *)malloc(mid*sizeof(B));
-//   R = (B *)malloc((n-mid)*sizeof(B));
+  // create left and right subarrays
+  // mid elements (from index 0 to mid-1) should be the left part of the sub-list
+  // (n-mid) elements (form mid to n-1) should be the right part of the sub-list
+  L = (B *)malloc(mid*sizeof(B));
+  R = (B *)malloc((n-mid)*sizeof(B));
 
-//   for(i=0;i<mid;i++) L[i] = currentList[i];
-//   for(i=mid;i<n;i++) R[i-mid] = currentList[i];
-
-
-//   mySort(L,mid,compar);
-//   mySort(R,n-mid,compar);
-//   myMerge(currentList,L,mid,R,n-mid,compar);
-//   free(L);
-//   free(R);
-// }
+  for(i=0;i<mid;i++) L[i] = currentList[i];
+  for(i=mid;i<n;i++) R[i-mid] = currentList[i];
 
 
+  mySort(L,mid,compar);
+  mySort(R,n-mid,compar);
+  myMerge(currentList,L,mid,R,n-mid,compar);
+  free(L);
+  free(R);
+}
  
 
 void print_results(int N)
 {
+  printf("in print\n");
     int i;
-    if((fp=fopen("top20.txt","w")))
+    if((fp=fopen("newtop20.txt","w")))
     {
       for(i=N-1;i>=N-20;i--)
       {  
-    printf("%g\t%g\t%g\t%d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
-    fprintf(fp, "%g\t%g\t%g\t%d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID);
+    printf("%g %g %g %d %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].sale);
+    fprintf(fp, "%g %g %g %d %d\n", list[i].rating, list[i].price, list[i].relevance, list[i].ID, list[i].sale);
     
       }
       fclose(fp);
     }
       else
     {
-      fprintf(stderr,"Trouble opening output file top20.txt\n");
+      fprintf(stderr,"Trouble opening output file newtop20.txt\n");
       exit(-1);
     }
 
@@ -261,10 +280,10 @@ int main(int argc, char *argv[])
   N=read_file(argv[2], N);
   
   user_interface(N);
-
+  
   print_results(N);
 
-  annaWantABook(N);
+  // annaWantABook(N);
 
   free(list);
 
