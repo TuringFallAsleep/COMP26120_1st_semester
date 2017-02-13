@@ -14,6 +14,7 @@ struct node
   // const char *word;
   tree_ptr left, right;
   // add anything else that you need
+  int count;
 };
 
 struct table 
@@ -25,29 +26,39 @@ struct table
 
 Table initialize_table(/*ignore parameter*/) 
 {
-	// struct node *head = (struct node*)malloc(sizeof(struct node));
-	tree_ptr *head = (tree_ptr*)malloc(sizeof(tree_ptr));
-	head = NULL;
+	Table t = (Table)malloc(sizeof(Table));
+	if (t ==NULL) abort();
+	// printf("in initialize_table\n");
+	return t;
 }
 
 Table insert(Key_Type element, Table t) 
 {
-	if (t == NULL)
+	printf("in insert head\n");
+	printf("first element is %s\n", element);
+	if (t->head->element == NULL)
 	{
+		
 		t->head->element = strdup(element);
+		printf("head strdup\n");
 		t->head->left = NULL;
 		t->head->right = NULL;
+		t->head->count = 1;
 		t->current = t->head;
+		printf("head of insert!!!!\n");
 		return t;
 	}
+	printf("in insert\n");
 	int compare_value = strcmp(element, t->current->element);
 	if (compare_value == 0)
 	{
+		printf("compare_value == 0\n");
 		return t;
 	}
 
 	if (compare_value < 0)
 	{
+		printf("compare_value < 0\n");
 		if (t->current->left != NULL)
 		{
 			t->current = t->current->left;
@@ -55,17 +66,20 @@ Table insert(Key_Type element, Table t)
 		}
 		else
 		{
-			tree_ptr *new_node = (tree_ptr *)malloc(sizeof(tree_ptr));
-			new_node->element = strdup(element);
-			new_node->left = NULL;
-			new_node->right = NULL;
-			t->current->left = new_node;
+			// tree_ptr *new_node = (tree_ptr *)malloc(sizeof(tree_ptr));
+			Table new_t = (Table)malloc(sizeof(Table));
+			new_t->head->element = strdup(element);
+			new_t->head->left = NULL;
+			new_t->head->right = NULL;
+			t->current = t->current->left;
 			t->current = t->head;
+			printf("tail of insert!!!\n");
 			return t;
 		}
 	}
 	else
 	{
+		printf("compare_value > 0\n");
 		if (t->current->right != NULL)
 		{
 			t->current = t->current->right;
@@ -73,25 +87,34 @@ Table insert(Key_Type element, Table t)
 		}
 		else
 		{
-			tree_ptr *new_node = (node *)malloc(sizeof(tree_ptr));
-			new_node->element = strdup(element);
-			new_node->left = NULL;
-			new_node->right = NULL;
-			t->current->right = new_node;
-			t->current = t->head;
+			Table new_t = (Table)malloc(sizeof(Table));
+			new_t->head->element = strdup(element);
+			new_t->head->left = NULL;
+			new_t->head->right = NULL;
+			t->current = t->current->right;
+			t->current = new_t->head;
+			printf("tail of insert!!!\n");
 			return t;
 		}
 	}
+	return t;
 }
 
-Boolean find(Key_Type, Table) 
+Boolean find(Key_Type element, Table t) 
 {
 }
 
-void print_table(Table) 
+void print_table(Table t) 
 {
+	// if (t != NULL)
+	// {
+	// 	print_table(t->current->left);
+	// 	printf("%s\n",t->current->element);
+	// 	print_table(t->current->right);
+	// }
+	printf("%s!!!!!!!!!!!!!!!!!\n", t->head->element);
 }
 
-void print_stats (Table) 
+void print_stats (Table t) 
 {
 }
