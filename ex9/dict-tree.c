@@ -28,17 +28,17 @@ Table initialize_table(/*ignore parameter*/)
 {
 	Table t = (Table)malloc(sizeof(Table));
 	if (t ==NULL) abort();
-	// printf("in initialize_table\n");
+	t->head = (tree_ptr)malloc(sizeof(tree_ptr));
 	return t;
 }
 
 Table insert(Key_Type element, Table t) 
 {
-	printf("in insert head\n");
+	
 	printf("first element is %s\n", element);
 	if (t->head->element == NULL)
 	{
-		
+		printf("in insert head\n");
 		t->head->element = strdup(element);
 		printf("head strdup\n");
 		t->head->left = NULL;
