@@ -24,23 +24,17 @@ struct table
   tree_ptr current;
 };
 
+int count_insert = 0;
+int count_find = 0;
+
 tree_ptr talloc(void)//make a tree node, allocate space
 {
-	return (tree_ptr)malloc(sizeof(tree_ptr));
+	return (tree_ptr)malloc(sizeof(struct node));
 }
-
-// Key_Type strdup1(char *s)
-// {
-// 	Key_Type p;
-// 	p = (char *)malloc(strlen(s)+1); // +1 for '\0'
-// 	if (p != NULL)
-// 		strcpy(p,s);
-// 	return p;
-// }
 
 Table initialize_table(/*ignore parameter*/) 
 {
-	Table t = (Table)malloc(sizeof(Table));
+	Table t = (Table)malloc(sizeof(struct table));
 	if (t == NULL) abort();
 	t->head = NULL;
 	printf("Table has been initialized.\n");
@@ -54,16 +48,9 @@ tree_ptr insert_node(Key_Type element, tree_ptr p)
 	if (p == NULL)
 	{
 		p = talloc();
-		// p->word = NULL;
-		char *c = strdup(element);//if no this, word will get nothing, do not know why
-		c = element;
-		char *d = strdup(element);//if no this, word will get nothing, do not know why
-		d = element;
 		p->word = strdup(element);
 		p->count = 1;
 		p->left = p->right = NULL;
-
-		// printf("insert word is %s\n", p->word);
 	}else if ((compare_value = strcmp(element, p->word)) == 0)
 	{
 		p->count++;
@@ -79,76 +66,24 @@ tree_ptr insert_node(Key_Type element, tree_ptr p)
 
 Table insert(Key_Type element, Table t) 
 {
-	// printf("current element is %s\n", element);
-	// if (t->head == NULL)
-	// {
-	// 	tree_ptr tree = talloc();
-	// 	t->head = tree;
-	// 	// char *c = strdup(element);//if no this, word will get nothing, do not know why
-	// 	// c = element;// to eliminate warning.
-	// 	// printf("%s\n", c);
-	// 	tree->word = strdup(element);
-	// 	tree->left = NULL;
-	// 	tree->right = NULL;
-	// 	t->current = t->head;
-	// 	// printf("%s\n", t->current->word);
-	// 	return t;
-	// }
-	char *c = strdup(element);//if no this, word will get nothing, do not know why
-	c = element;// to eliminate warning.
-	// printf("c is %s\n", c);
-	t->head = insert_node(element, t->head);
-	// printf("in insert\n");
+	if (mode == 0)
+	{
+		count_insert++;
+		t->head = insert_node(element, t->head);
+		return t;
+	}
+	if (mode == 1)
+	{
+		count_insert++;
+		t->head = insert_node(element, t->head);
 
-
-	// int compare_value = strcmp(element, t->current->word);
-	// if (compare_value == 0)
-	// {
-	// 	printf("compare_value == 0\n");
-	// 	return t;
-	// }
-
-	// if (compare_value < 0)
-	// {
-	// 	printf("compare_value < 0\n");
-	// 	if (t->current->left != NULL)
-	// 	{
-	// 		t->current = t->current->left;
-	// 		insert(element,t);
-	// 	}
-	// 	else
-	// 	{
-	// 		tree_ptr new_node = talloc();
-	// 		new_node->word = strdup(element);
-	// 		printf("%s\n", new_node->word);
-	// 		new_node->left = NULL;
-	// 		new_node->right = NULL;
-	// 		t->current = t->current->left;
-	// 		t->current = new_node;
-	// 		return t;
-	// 	}
-	// }
-	// else
-	// {
-	// 	printf("compare_value > 0\n");
-	// 	if (t->current->right != NULL)
-	// 	{
-	// 		t->current = t->current->right;
-	// 		insert(element,t);
-	// 	}
-	// 	else
-	// 	{
-	// 		tree_ptr new_node = talloc();
-	// 		new_node->word = strdup(element);
-	// 		printf("%s\n", new_node->word);
-	// 		new_node->left = NULL;
-	// 		new_node->right = NULL;
-	// 		t->current = t->current->right;
-	// 		t->current = new_node;
-	// 		return t;
-	// 	}
-	// }
-	return t;
+		return t;
+	}else
+	{
+		printf("Please choose mode!\n");
+		return 0;
+	}
+	
 }
 
 Boolean find_wrong(Key_Type element, tree_ptr current)
@@ -167,6 +102,7 @@ Boolean find_wrong(Key_Type element, tree_ptr current)
 
 Boolean find(Key_Type element, Table t) // tree_node *dictionary, char *word
 {
+	count_find++;
 	t->current = t->head;
 	return find_wrong(element,t->current);
 }
@@ -180,13 +116,6 @@ void print_tree(tree_ptr tree)
 		print_tree(tree->right);
 	}else
 	return;
-	// if (!tree)
-	// 	return;
-	// if (tree->left)
-	// 	print_tree (tree->left);
-	// printf("%d  %s\n",tree->count,tree->word);
-	// if (tree->right)
-	// 	print_tree (tree->right);
 }
 
 void print_table(Table t) 
@@ -194,11 +123,30 @@ void print_table(Table t)
 	print_tree(t->head);
 }
 
-void print_tree_stats(tree_ptr tree)
+int find_Height(tree_ptr isNode)
 {
-	// if(tr)
+	if (!isNode)
+	{
+		return -1;
+	}
+	int leftH = find_Height(isNode->left);
+	int rightH = find_Height(isNode->right);
+
+	if (leftH > rightH)
+	{
+		return leftH + 1;
+	}else
+	{
+		return rightH + 1; 
+	}
+
 }
 void print_stats (Table t) 
 {
-	print_tree_stats(t->head);
+	int height;
+	height = find_Height(t->head);
+	printf("Height of tree is %d.\n", height);
+	printf("Insert time is %d.\n", count_insert);
+	printf("Find time is %d.\n", count_find);
 }
+
