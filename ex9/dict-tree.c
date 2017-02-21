@@ -88,6 +88,7 @@ Table insert(Key_Type element, Table t)
 
 Boolean find_wrong(Key_Type element, tree_ptr current)
 {
+	count_find++;
 	if (!element || !current)
 		return FALSE;
 	int compare_value = strcmp(element,current->word);
@@ -102,7 +103,7 @@ Boolean find_wrong(Key_Type element, tree_ptr current)
 
 Boolean find(Key_Type element, Table t) // tree_node *dictionary, char *word
 {
-	count_find++;
+	
 	t->current = t->head;
 	return find_wrong(element,t->current);
 }
