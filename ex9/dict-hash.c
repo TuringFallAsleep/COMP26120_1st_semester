@@ -42,7 +42,7 @@ Table initialize_table (Table_size size)
 	t->num_collision = 0;
 	t->num_duplicate = 0;
 	t->table_size = size;
-	printf("Table has been initialized.\n");
+	// printf("Table has been initialized.\n");
 	return t;
 }
 
@@ -95,10 +95,10 @@ Table_size find_a_next_nearest_prime_number(Table_size n)
 
 Table rehashing(Table old_table)
 {
-	printf("Rehashing!!!\n");
+	// printf("Rehashing!!!\n");
 	Table_size old_table_size = old_table->table_size;
 	Table_size new_table_size = find_a_next_nearest_prime_number(2*old_table->table_size);
-	printf("New table size is %d\n", new_table_size);
+	// printf("New table size is %d\n", new_table_size);
 	Table new_table = initialize_table(new_table_size);
 	for (int i = 0; i < old_table_size; ++i)
 	{
@@ -106,7 +106,7 @@ Table rehashing(Table old_table)
 		{
 			unsigned int hash_code = hashCode(old_table->cells[i].element,strlen(old_table->cells[i].element),new_table);
 			new_table->cells[hash_code] = insert_cell(old_table->cells[i].element);
-			printf("Rehashing. New hash code is %d, element is %s\n", hash_code, new_table->cells[hash_code].element);
+			// printf("Rehashing. New hash code is %d, element is %s\n", hash_code, new_table->cells[hash_code].element);
 		}
 	}
 	free(old_table);
@@ -307,4 +307,5 @@ void print_stats (Table t)
 {
 	printf("Insert time is %d.\n", count_insert);
 	printf("Find time is %d.\n", count_find);
+	printf("Hash table size is %d\n", t->table_size);
 }
