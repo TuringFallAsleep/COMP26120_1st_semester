@@ -41,9 +41,61 @@ Table initialize_table(/*ignore parameter*/)
 	return t;
 }
 
-
-tree_ptr insert_node(Key_Type element, tree_ptr p)
+int find_Height(tree_ptr isNode)
 {
+	if (!isNode)
+	{
+		return -1;
+	}
+	int leftH = find_Height(isNode->left);
+	int rightH = find_Height(isNode->right);
+
+	if (leftH > rightH)
+	{
+		return leftH + 1;
+	}else
+	{
+		return rightH + 1; 
+	}
+
+}
+
+// Rotate
+tree_ptr rightRotate(tree_ptr z)
+{
+	tree_ptr y = z->left;
+	tree_ptr T3 = y->right;
+
+	y->right = z;
+	z->left = T3;
+
+	return y;
+}
+
+tree_ptr leftRotate(tree_ptr x)
+{
+	tree_ptr y = x->right;
+	tree_ptr T2 = y->left;
+
+	y->left = x;
+	x->right = T2;
+
+	return y;
+}
+
+int getBalance(tree_ptr p)
+{
+	if (p == NULL)
+		return 0;
+	return find_Height(p->left) - find_Height(p->right);
+}
+
+
+
+
+tree_ptr insert_node_BST(Key_Type element, tree_ptr p)
+{
+	count_insert++;
 	int compare_value;
 	if (p == NULL)
 	{
@@ -57,9 +109,54 @@ tree_ptr insert_node(Key_Type element, tree_ptr p)
 		// printf("%d\n", p->count);
 	}
 	else if (compare_value < 0)
-		p->left = insert_node(element,p->left);
+		p->left = insert_node_BST(element,p->left);
 	else
-		p->right = insert_node(element,p->right);
+		p->right = insert_node_BST(element,p->right);
+	return p;
+}
+
+tree_ptr insert_node_AVL(Key_Type element, tree_ptr p)
+{
+	count_insert++;
+	int compare_value;
+	if (p == NULL)
+	{
+		p = talloc();
+		p->word = strdup(element);
+		p->count = 1;
+		p->left = p->right = NULL;
+	}else if ((compare_value = strcmp(element, p->word)) == 0)
+	{
+		p->count++;
+		// printf("%d\n", p->count);
+	}
+	else if (compare_value < 0)
+		p->left = insert_node_AVL(element,p->left);
+	else
+		p->right = insert_node_AVL(element,p->right);
+	
+
+	int balance = getBalance(p);
+
+	// left left case
+	if (balance > 1 && ((compare_value = strcmp(element, p->left->word)) < 0))
+		return rightRotate(p);
+	// right right case
+	if (balance < -1 && ((compare_value = strcmp(element, p->right->word)) > 0))
+		return leftRotate(p);
+	// left right case
+	if (balance > 1 && ((compare_value = strcmp(element, p->left->word)) > 0))
+	{
+		p->left = leftRotate(p->left);
+		return rightRotate(p);
+	}
+	// right left case
+	if (balance < -1 && ((compare_value = strcmp(element, p->right->word)) < 0))
+	{
+		p->right = rightRotate(p->right);
+		return leftRotate(p);
+	}
+
 	return p;
 }
 
@@ -67,16 +164,13 @@ tree_ptr insert_node(Key_Type element, tree_ptr p)
 Table insert(Key_Type element, Table t) 
 {
 	if (mode == 0)
-	{
-		count_insert++;
-		t->head = insert_node(element, t->head);
+	{		
+		t->head = insert_node_BST(element, t->head);
 		return t;
 	}
 	if (mode == 1)
 	{
-		count_insert++;
-		t->head = insert_node(element, t->head);
-
+		t->head = insert_node_AVL(element, t->head);
 		return t;
 	}else
 	{
@@ -124,24 +218,7 @@ void print_table(Table t)
 	print_tree(t->head);
 }
 
-int find_Height(tree_ptr isNode)
-{
-	if (!isNode)
-	{
-		return -1;
-	}
-	int leftH = find_Height(isNode->left);
-	int rightH = find_Height(isNode->right);
 
-	if (leftH > rightH)
-	{
-		return leftH + 1;
-	}else
-	{
-		return rightH + 1; 
-	}
-
-}
 void print_stats (Table t) 
 {
 	int height;
