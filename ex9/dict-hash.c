@@ -53,7 +53,7 @@ unsigned int hashCode(void *element, int len, Table t)
 	unsigned int hash = 0;
 	for (i=len; i>0; i--)
 	{
-		hash = p[i]*37^(len-1)+hash;
+		hash = p[i]*(37^(len-1))+hash;
 	}
 	return hash % t->table_size;//modify
 }
