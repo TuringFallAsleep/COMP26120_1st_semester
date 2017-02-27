@@ -102,6 +102,7 @@ Table rehashing(Table old_table)
 	Table new_table = initialize_table(new_table_size);
 	new_table->num_duplicate = old_table->num_duplicate;
 	new_table->num_collision = old_table->num_collision;
+	new_table->num_entries = old_table->num_entries;
 	for (int i = 0; i < old_table_size; ++i)
 	{
 		if (old_table->cells[i].state == in_use)
@@ -168,6 +169,7 @@ Table rehashing(Table old_table)
 
 Table insert (Key_Type element, Table t) 
 {
+	t->num_entries++;
 	unsigned int hash_code = hashCode(element,strlen(element),t);
 	// printf("Current element is %s, with hash code %d\n", element, hash_code);
 	if (mode == 0)
@@ -196,6 +198,7 @@ Table insert (Key_Type element, Table t)
 				// printf("prepared for rehashing count_insert is %d\n", count_insert);
 				t = rehashing(t);
 				t = insert(element,t);
+				t->num_entries--;
 				return t;
 			}
 			t->num_collision++;
@@ -223,6 +226,7 @@ Table insert (Key_Type element, Table t)
 			{
 				t = rehashing(t);
 				t = insert(element,t);
+				t->num_entries--;
 				return t;
 			}
 			t->num_collision++;
@@ -253,6 +257,7 @@ Table insert (Key_Type element, Table t)
 			{
 				t = rehashing(t);
 				t = insert(element,t);
+				t->num_entries--;
 				return t;
 			}
 			t->num_collision++;
@@ -365,6 +370,7 @@ void print_table (Table t)
 
 void print_stats (Table t) 
 {
+	printf("Entry is %d\n", t->num_entries);
 	printf("Collision is %d\n", t->num_collision);
 	printf("Duplicate is %d\n", t->num_duplicate);
 	printf("Insert time is %d.\n", count_insert);
