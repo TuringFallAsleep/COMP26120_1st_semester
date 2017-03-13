@@ -224,6 +224,7 @@ void branch_and_bound(int *final_sol)
   //     else
   //       compute the value and bound
   //       if value > current_best, set current_best to it, and copy child to final_sol
+  //
   //       add child to the queue
   // RETURN
   

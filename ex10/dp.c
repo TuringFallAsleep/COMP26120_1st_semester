@@ -59,6 +59,33 @@ int DP(int *v,int *wv, int n, int W, int *solution)
 
   // Dynamically allocate memory for variables V and keep
   /* ADD CODE HERE */
+  for (int w = 0; w < W; w++)
+    V[w] = 0;
+  for (int i = 0; i < n; i++)
+  {
+    for (int w = 0; w < W; w++)
+    {
+      if (wv[i]<=w && (v[i]+V[i-1][w-wv[i]]>V[i-1][w]))
+      {
+        V[i][w] = v[i] + V[i-1][w-wv[i]];
+        keep[i][w]=1;
+      }
+      else{
+        V[i][w] = V[i-1][w];
+        keep[i][w] = 0;
+      }
+      K = W;
+      for (int i = n; i > 1; i--)
+      {
+        if (keep[i][K] == 1)
+        {
+          printf("%d ", i);
+          K = K-wv[i];
+        }
+      return V[n][W];
+      }
+    }
+  }
  
  //  set the values of the zeroth row of the partial solutions table to zero
   /* ADD CODE HERE */
