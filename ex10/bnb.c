@@ -215,7 +215,13 @@ void branch_and_bound(int *final_sol)
   // compute its value and its bound
   // put current_best = to its value
   // store it in the priority queue
-  
+  struc_sol solu = (struc_sol)malloc(sizeof(struc_sol)*SIZE);
+  solu->fixed = 0;
+  frac_bound(solu,solu->fixed);
+  int current_best = solu->val;
+  insert(solu);
+  upheap(QueueSize);
+
   // LOOP until queue is empty or upper bound is not greater than current_best:
   //   remove the first item in the queue
   //   construct two children, 1 with a 1 added, 1 with a O added
@@ -227,7 +233,13 @@ void branch_and_bound(int *final_sol)
   //
   //       add child to the queue
   // RETURN
-  
+  while(pqueue || removeMax()->bound <= current_best)
+  {
+    pqueue = removeMax();
+    // downheap(QueueSize);
+    struc_sol child1;
+    struc_sol child0;
+  }
 
   /* YOUR CODE GOES HERE */
 

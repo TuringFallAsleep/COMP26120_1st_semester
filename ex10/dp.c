@@ -59,47 +59,56 @@ int DP(int *v,int *wv, int n, int W, int *solution)
 
   // Dynamically allocate memory for variables V and keep
   /* ADD CODE HERE */
-  for (int w = 0; w < W; w++)
-    V[w] = 0;
-  for (int i = 0; i < n; i++)
+  V = (int**)malloc(sizeof(int*)*(n+1));
+  keep = (int**)malloc(sizeof(int*)*(n+1));
+  for (i = 0; i < n+1; i++)
   {
-    for (int w = 0; w < W; w++)
-    {
-      if (wv[i]<=w && (v[i]+V[i-1][w-wv[i]]>V[i-1][w]))
-      {
-        V[i][w] = v[i] + V[i-1][w-wv[i]];
-        keep[i][w]=1;
-      }
-      else{
-        V[i][w] = V[i-1][w];
-        keep[i][w] = 0;
-      }
-      K = W;
-      for (int i = n; i > 1; i--)
-      {
-        if (keep[i][K] == 1)
-        {
-          printf("%d ", i);
-          K = K-wv[i];
-        }
-      return V[n][W];
-      }
-    }
+    V[i] = (int*)malloc(sizeof(int)*(W+1));
+    keep[i] = (int*)malloc(sizeof(int)*(W+1));
   }
+ 
  
  //  set the values of the zeroth row of the partial solutions table to zero
   /* ADD CODE HERE */
+  for (w = 0; w <= W; w++)
+    V[0][w] = 0;
 
 
  // main dynamic programming loops , adding one item at a time and looping through weights from 0 to W
   /* ADD CODE HERE */
-
+  for (i = 1; i <= n; i++)
+  {
+    for (w = 0; w <= W; w++)
+    {
+      if ((wv[i]<=w) 
+          && ((v[i]+V[i-1][w-wv[i]])>V[i-1][w]))
+      {
+        V[i][w] = v[i] + V[i-1][w-wv[i]];
+        keep[i][w]=1;
+      }
+      else
+      {
+        V[i][w] = V[i-1][w];
+        keep[i][w] = 0;
+      }
+    }
+  }
 
   // now discover which items were in the optimal solution
   /* ADD CODE HERE */
 
-
+  K = W;
+  for (i = n; i >= 1; i--)
+  {
+    if (keep[i][K] == 1)
+    {
+      solution[i] = 1;
+      K = K-wv[i];
+    }
+  }
   return V[n][W];
+      
+    
 }
 
 
