@@ -80,9 +80,9 @@ void downheap(int qindex)
     {
       j=qindex+qindex;
       if(j<QueueSize && pqueue[j].bound<pqueue[j+1].bound)
-	j++;
+  j++;
       if(temp_element.bound>=pqueue[j].bound)
-	break;
+  break;
       pqueue[qindex]=pqueue[j]; qindex=j;
     }
   pqueue[qindex]=temp_element;
@@ -154,7 +154,7 @@ void frac_bound(struc_sol *sol, int fix)
     }
 
   sol->val=totalp;
-  //  printf("%g %d\n", totalp, totalw);                                        
+   // printf("%g %d\n", totalp, totalw);                                        
 
   // add in items the rest of the items until capacity is exceeded              
   i=fix+1;
@@ -171,10 +171,31 @@ void frac_bound(struc_sol *sol, int fix)
     {
       --i;
       totalp-=((double)(totalw-Capacity)/(double)(item_weights[temp_indexes[i]]\
-						  ))*item_values[temp_indexes[i]];
+              ))*item_values[temp_indexes[i]];
     }
  sol->bound=totalp;
 }
+
+int check_feasible(struc_sol sol)
+{
+  double totalp=0; // profit total                                              
+  int totalw=0; // weight total
+
+    int i;
+    for (i = 1; i < Nitems+1; i++)
+    {
+        if(sol.solution_vec[i] == 1)
+        {
+            totalw += item_weights[temp_indexes[i]];
+            totalp += item_values[temp_indexes[i]];
+        }//if
+    }//for
+
+    if (totalw > Capacity)
+        return 0;
+    else
+        return 1;
+}//check_feasible
 
 
 int main(int argc, char *argv[1])
@@ -215,12 +236,13 @@ void branch_and_bound(int *final_sol)
   // compute its value and its bound
   // put current_best = to its value
   // store it in the priority queue
-  struc_sol solu = (struc_sol)malloc(sizeof(struc_sol)*SIZE);
-  solu->fixed = 0;
-  frac_bound(solu,solu->fixed);
-  int current_best = solu->val;
+  struc_sol solu;
+  solu.fixed = 0;
+
+  frac_bound(&solu,solu.fixed);
+  static int current_best = 0;
+  current_best = solu.val;
   insert(solu);
-  upheap(QueueSize);
 
   // LOOP until queue is empty or upper bound is not greater than current_best:
   //   remove the first item in the queue
@@ -233,16 +255,50 @@ void branch_and_bound(int *final_sol)
   //
   //       add child to the queue
   // RETURN
-  while(pqueue || removeMax()->bound <= current_best)
+  int count = 0;
+  while(pqueue && solu.bound > current_best)
   {
-    pqueue = removeMax();
-    // downheap(QueueSize);
-    struc_sol child1;
-    struc_sol child0;
+    count++;
+    *pqueue = removeMax();
+    struc_sol child1 = *pqueue;
+    struc_sol child0 = *pqueue;
+
+    child1.fixed++;
+    child0.fixed++;
+
+    child1.solution_vec[child1.fixed] = 1;
+    child0.solution_vec[child0.fixed] = 0;
+   
+    frac_bound(&child0,solu.fixed);
+    
+    if (check_feasible(child1))
+    {
+      frac_bound(&child1,child1.fixed);
+      if (child1.val > current_best)
+      {
+        current_best = child1.val;
+        copy_array(child1.solution_vec,final_sol);
+        solu = child1;
+        // printf("child 1\n");
+      }
+      insert(child1);
+    }
+       
+    if (check_feasible(child0))
+    {
+      frac_bound(&child0,child0.fixed);
+      if (child0.val > current_best)
+      {
+        current_best = child0.val;
+        copy_array(child0.solution_vec,final_sol);
+        solu = child0;
+        // printf("child 0\n");
+      }
+      insert(child0);
+    }
+    
   }
-
-  /* YOUR CODE GOES HERE */
-
+  return;
 }
   
 

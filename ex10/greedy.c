@@ -44,6 +44,19 @@ void greedy()
      if an item fits, add it to the knapsack, and 
      do not stop at the first item that doesn't fit 
      - but keep going until all items have been tried */
+  for(i=1;i<Nitems+1;i++)
+  {
+    total_weight += item_weights[temp_indexes[i]];
+    total_value += item_values[temp_indexes[i]];
+    solution[i] = 1;
+    if (total_weight > Capacity)
+    {
+      total_weight -= item_weights[temp_indexes[i]];
+      total_value -= item_values[temp_indexes[i]];
+      solution[i] = 0;
+    }
+  }
+
 
   printf("The greedy solution - not necessarily optimal - is:\n");
   check_evaluate_and_print_sol(solution, &total_value, &total_weight);  

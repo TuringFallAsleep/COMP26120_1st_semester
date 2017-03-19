@@ -69,15 +69,18 @@ void enumerate()
       if (!infeasible && total_value > best_value)
       {
           best_value = total_value;
-          best_solution[1] = solution[1];
           final_weight = total_weight;
+          for(int l=1; l<Nitems+1;l++)
+          {
+            best_solution[l] = solution[l];
+          }
       }
       
       printf("\r%d/%e has been enumerated.", i, total_enumerate);
     }
  /* ADD CODE TO PRINT OUT BEST SOLUTION */
     printf("\nOptimal solution is: ");
-    for (int j=1; j<Nitems;j++)
+    for (int j=1; j<Nitems+1;j++)
     {
       if (best_solution[j])
       {
@@ -99,15 +102,15 @@ int next_binary(int *str, int Nitems)
   while(i>=0)
     {
       if(str[i]==1)
-	{
-	  str[i]=0;
-	  i--;
-	}
+  {
+    str[i]=0;
+    i--;
+  }
       else
-	{
-	  str[i]=1;
-	  break;
-	}
+  {
+    str[i]=1;
+    break;
+  }
     }
   if(i==-1)
     {
