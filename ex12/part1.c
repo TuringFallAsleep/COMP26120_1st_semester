@@ -4,6 +4,8 @@
 //   int index;
 //   int distance;
 // } Queue;
+int *distance; //distance from v to u
+int *visited;
 
 
 int* getInDegree(Graph *mygraph)
@@ -32,7 +34,7 @@ int* getInDegree(Graph *mygraph)
 int n=0;
 void heapInsert(int *distance, int *Q, int index)
 {
-  printf("in heapInsert %d\n", index);
+  printf("insert %d\n", index);
   Q[n++] = index;
   int i = n;
   int temp;
@@ -50,8 +52,9 @@ int heapRemoveMin(int *Q,int *distance)
   // printf("in heapRemoveMin\n");
   int temp = Q[0];
   int j;
-  printf("in remove %d\n", temp);
+  printf("remove %d\n", temp);
   Q[0] = Q[n];
+  // printf("Q[n] = Q[%d] = %d\n",n,Q[n]);
   n--;
   int i = 1;
   while(i<n)
@@ -91,11 +94,11 @@ int heapRemoveMin(int *Q,int *distance)
 
 int* dijkastraShortestPaths(Graph* mygraph, int v){
   int u = v;
-  int *distance; //distance from v to u
+  // int *distance; //distance from v to u
   distance = (int *)malloc(sizeof(int)*mygraph->MaxSize);
-  int *visited;
+  // int *visited;
   visited = (int *)malloc(sizeof(int)*mygraph->MaxSize);
-  for (int i = 0; i < mygraph->MaxSize; ++i)
+  for (int i = 0; i < mygraph->MaxSize; i++)
   {
     distance[i] = mygraph->MaxSize;// use -1 to represent infinite (v to i)
     visited[i] = 0;
@@ -112,67 +115,108 @@ int* dijkastraShortestPaths(Graph* mygraph, int v){
     Q[i] = -1;
   }
 
-  Q[0] = v;
-  n++;
+  // Q[0] = v; // insert v
+  // n++;
 
   int newVertex=0;
+  int z = v;
+  List *list;
+
+  heapInsert(distance,Q,z);
+  while(Q[0]!=-1 && n > 0){
+    do{ 
+
+      // heapInsert(distance,Q,z); // --> insert new nodes  
+
+      newVertex = heapRemoveMin(Q,distance); // --> get the first vertex
+      printf("newVertex = %d\n",newVertex );
+      if (visited[newVertex]==0) // if not be visited, then visit it
+      {
+        visited[newVertex] = 1;
+        // pull a new vertex u into the cloud
+        printf("current visiting u = %d\n", newVertex);
+        u=newVertex; // visit u
+      } 
+
+      list = mygraph->table[u].outlist; // for the node u
+      while(list) // --> get each vertex z adjacent to u such that z is in Q
+      {
+        z = list->index; // current neighbor z
+        if (distance[u] + 1 < distance[z])
+        {
+          distance[z] = distance[u] + 1;
+          if (visited[z]==0) // maybe no need 
+          {
+            heapInsert(distance,Q,z);
+            printf("distance[%d] = %d\n",z,distance[z]);
+          }else{
+            printf("%d has been visited.\n",z );
+          }
+        }printf("%d has been visited.\n",z );
+        list = list->next;
+      } 
+
+    }while(Q[0]!=-1 && n>0);
+    int noUse = heapRemoveMin(Q,distance);
+  }
+  
 
 
-
-  while(Q[0]!=-1){
-   newVertex = heapRemoveMin(Q,distance);
-   if (visited[newVertex]==0)
-   {
-    visited[newVertex] = 1;
-    // pull a new vertex u into the cloud
-    printf("u = %d\n", newVertex);
-    u=newVertex;
-    }
+  // while(Q[0]!=-1){
+  //  newVertex = heapRemoveMin(Q,distance); //get the first vertex
+  //  printf("newVertex = %d\n",newVertex );
+  //  if (visited[newVertex]==0)
+  //  {
+  //   visited[newVertex] = 1;
+  //   // pull a new vertex u into the cloud
+  //   printf("u = %d\n", newVertex);
+  //   u=newVertex;
+  //  }
       
 
-    List *list = mygraph->table[u].outlist;
-    while(list) // get each vertex z adjacent to u such that z is in Q
-    {
-      u = newVertex;
-      int z = list->index;
-      if (distance[u]+ 1 < distance[z])
-      {
-        distance[z] = distance[u] + 1;
-        heapInsert(distance,Q,z);
-        printf("distance[%d] = %d\n",z,distance[z]);
-      }
-      list = list->next;
-    }
-}
+  //   List *list = mygraph->table[u].outlist;
+  //   while(list) // get each vertex z adjacent to u such that z is in Q
+  //   {
+  //     u = newVertex;
+  //     int z = list->index;
+  //     if (distance[u]+ 1 < distance[z])
+  //     {
+  //       distance[z] = distance[u] + 1;
+  //       heapInsert(distance,Q,z);
+  //       printf("distance[%d] = %d\n",z,distance[z]);
+  //     }
+  //     list = list->next;
+  //   }
+  // } // while(Q[0]!=-1)
   
 
-  if (n>0 && visited[u]==0)
-  {
-    visited[0] = 1;
-    newVertex = heapRemoveMin(Q,distance); // pull a new vertex u into the cloud
-    visited[newVertex] = 1;
-    printf("u = %d\n", newVertex);
-  }
-  
-
-  List *list = mygraph->table[u].outlist;
-  while(list) // get each vertex z adjacent to u such that z is in Q
-  {
-    u = newVertex;
-    int z = list->index;
-    if (distance[u]+ 1 < distance[z])
-    {
-      distance[z] = distance[u] + 1;
-      heapInsert(distance,Q,z);
-      printf("distance[%d] = %d\n",u,distance[u]);
-    }
-    list = list->next;
-  }
-  // printf("list->index = %d\n",list->index);
-  // for (int i = 0; i < mygraph->MaxSize; ++i)
+  // if (n>0 && visited[u]==0)
   // {
-  //   //printf("Q[%d] = %d\n",i,Q[i]);
+  //   visited[0] = 1;
+  //   newVertex = heapRemoveMin(Q,distance); // pull a new vertex u into the cloud
+  //   visited[newVertex] = 1;
+  //   printf("visited u = %d\n", newVertex);
   // }
+  
+
+  // List *list = mygraph->table[u].outlist;
+  // while(list) // get each vertex z adjacent to u such that z is in Q
+  // {
+  //   u = newVertex;
+  //   int z = list->index;
+  //   if (distance[u]+ 1 < distance[z])
+  //   {
+  //     distance[z] = distance[u] + 1;
+  //     heapInsert(distance,Q,z);
+  //     printf("distance[%d] = %d\n",u,distance[u]);
+  //   }
+  //   list = list->next;
+  // }
+  // printf("list->index = %d\n",list->index);
+  for (int i = 0; i < mygraph->MaxSize; ++i)
+  {
+    printf("Q[%d] = %d\n",i,Q[i]);
+  }
   
   
   return distance;
@@ -238,33 +282,33 @@ int main(int argc,char *argv[])
 
   double sumDistance = 0;
   int largest = 0;
-  for (int i = 1; i < mygraph.MaxSize; i++)
-  {
-    n = 0;
-    nodeDistance[i] = dijkastraShortestPaths(&mygraph,1);
-  }
+  // for (int i = 1; i < mygraph.MaxSize; i++)
+  // {
+  //   n = 0;
+    nodeDistance[1] = dijkastraShortestPaths(&mygraph,1);
+  // }
 
-  for (int i = 1; i < mygraph.MaxSize; i++)
-  {
-    for (int j = 1; j < mygraph.MaxSize; j++)
-    {
-      printf("node %d to node %d has a distance %d.\n",i,j, nodeDistance[i][j] );
-      if (nodeDistance[i][j]>6 && nodeDistance[i][j]!=mygraph.MaxSize)
-        printf("node %d to node %d has a distance larger than 6.\n",i,j );
-      if (nodeDistance[i][j]!=mygraph.MaxSize)
-      {
-        sumDistance += nodeDistance[i][j];
-      }
+  // for (int i = 1; i < mygraph.MaxSize; i++)
+  // {
+  //   for (int j = 1; j < mygraph.MaxSize; j++)
+  //   {
+  //     printf("node %d to node %d has a distance %d.\n",i,j, nodeDistance[i][j] );
+  //     if (nodeDistance[i][j]>6 && nodeDistance[i][j]!=mygraph.MaxSize)
+  //       printf("node %d to node %d has a distance larger than 6.\n",i,j );
+  //     if (nodeDistance[i][j]!=mygraph.MaxSize)
+  //     {
+  //       sumDistance += nodeDistance[i][j];
+  //     }
       
-      if (nodeDistance[i][j]>largest && nodeDistance[i][j]!=mygraph.MaxSize)
-        largest = nodeDistance[i][j];
-    }
-  }
+  //     if (nodeDistance[i][j]>largest && nodeDistance[i][j]!=mygraph.MaxSize)
+  //       largest = nodeDistance[i][j];
+  //   }
+  // }
 
-  double averageDistance = sumDistance/(mygraph.MaxSize-1)/(mygraph.MaxSize-2);
-  printf("Total distance is %f.\n", sumDistance);
-  printf("Average distance is %f.\n", averageDistance);
-  printf("Largest distance is %d\n", largest);
+  // double averageDistance = sumDistance/(mygraph.MaxSize-1)/(mygraph.MaxSize-2);
+  // printf("Total distance is %f.\n", sumDistance);
+  // printf("Average distance is %f.\n", averageDistance);
+  // printf("Largest distance is %d\n", largest);
   
 
   return(0);
