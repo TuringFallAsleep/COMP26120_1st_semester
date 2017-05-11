@@ -1,6 +1,5 @@
 #include "graph.h"
 
-
 int* getInDegree(Graph *mygraph)
 {
 	int *indegree = malloc(sizeof(int)*(mygraph->MaxSize));
@@ -26,7 +25,6 @@ int* getInDegree(Graph *mygraph)
 
 int main(int argc,char *argv[])
 {
-
   Graph mygraph;
 
   read_graph(&mygraph,argv[1]);

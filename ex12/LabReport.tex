@@ -1,24 +1,36 @@
 \documentclass{article}
-
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
 \title{COMP26120 Lab 13: Background}
-\author{?}
+\author{Boyin Yang}
 
 \begin{document}
 \maketitle
 
 % PART 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% compile: pdflatex filename.tex
+
 \section{The small-world hypothesis}
 \label{sec:small world}
 % Here give your statement of the small-world hypothesis and how you
 % are going to test it.
+A small-word network is a type of mathematical graph in which most nodes are not neighbors of one another, the neighbors of any given node are likely to be neighbors of each other and most nodes can be reached from every other node by a small number of steps. Based on "Six degrees of separation", let's assume the small steps is six.
+
+So I will use all pairs shortest path algorithm Dijkstra's algorithm or Floyd's algorithm to find every node's shortest path to every other nodes, and see if it is not larger than six.
 
 
 \section{Complexity Arguments}
 \label{sec:complexity}
 % Write down the complexity of Dijkstra's algorithm and of Floyd's algorithm.
 % Explain why, for these graphs, Dijkstra's algorithm is more efficient.
-
+$\mathcal{O}(n\log{}n)$
+Dijkstra's algorithm stores the vertex set Q as an ordinary linked list ot array, and extract-minimum is a linear search through all vertices in Q. In this case, for single source searching, the complexity is: 
+$\mathcal{O}(V^{2})$, which can be improved by using Fibonacci heap, and the complexity is: 
+\newline\centerline$\mathcal{O}(E+V\log{}V)$
+\newline and if we use it in all pairs shortest algorithm, the complexity will be $\mathcal{O}(EV+V^{2}\log{}V)$.\\
+For Floyd's algorithm,the time complexity is $\mathcal{O}(V^{3})$.\\
+So for the sparse graph, Dijkstra has better performance.
 
 \section{Part 1 results}
 \label{sec:part1}

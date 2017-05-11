@@ -33,6 +33,10 @@ extern int insert_graph_node (Graph *mygraph, int n, char *name);
 extern int insert_graph_link (Graph *mygraph, int source, int target);
 extern int read_graph (Graph *mygraph, char *filename);
 extern void print_graph (Graph *mygraph);
+extern int *dij(Graph* mygraph, int v);
+extern void heapInsert(int distance, int *Q);
+extern int heapRemoveMin(int *Q);
+
 
 
 extern void BFS (Graph *mygraph, int sNode, int lNode);
