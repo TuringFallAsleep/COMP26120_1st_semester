@@ -102,7 +102,7 @@ int* dijkastraShortestPaths(Graph* mygraph, int v){
   visited = (int *)malloc(sizeof(int)*mygraph->MaxSize);
   for (int i = 0; i < mygraph->MaxSize; i++)
   {
-    distance[i] = mygraph->MaxSize + 999;// use mygraph->MaxSize+1 to represent infinite (v to i)
+    distance[i] = mygraph->MaxSize;// use mygraph->MaxSize+1 to represent infinite (v to i)
     visited[i] = 0;
   }
   distance[v] = 0;
@@ -162,10 +162,10 @@ int* dijkastraShortestPaths(Graph* mygraph, int v){
         list = list->next;
       }
       for (int i = 0; i < mygraph->MaxSize; ++i)
-  {
-    printf("Q[%d] = %d\n",i,Q[i]);
-    // printf("distance[%d] = %d\n",i,distance[i]);
-  } 
+      {
+        printf("Q[%d] = %d\n",i,Q[i]);
+        // printf("distance[%d] = %d\n",i,distance[i]);
+      } 
     }while(Q[0]!=-1 && n>0);
     noUse = heapRemoveMin(Q,distance);
 
