@@ -39,7 +39,7 @@ void heapInsert(int *distance, int *Q, int index)
   Q[n-1] = index;
   int i = n;
   int temp;
-  while(i>1 && distance[(int)i/2-1]>distance[i-1])
+  while(i>2 && distance[(int)i/2-1]>distance[i-1])
   {
     temp = Q[(int)i/2-1];
     Q[(int)i/2-1] = Q[i-1];

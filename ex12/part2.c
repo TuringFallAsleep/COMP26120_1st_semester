@@ -1,5 +1,6 @@
 #include "graph.h"
 
+
 int* getInDegree(Graph *mygraph)
 {
 	int *indegree = malloc(sizeof(int)*(mygraph->MaxSize));
@@ -21,6 +22,12 @@ int* getInDegree(Graph *mygraph)
 		}
 	}
 	return indegree;
+}
+
+void heuristics(Graph *mygraph){
+  List* current;
+  int source;
+
 }
 
 int main(int argc,char *argv[])
@@ -75,8 +82,8 @@ int main(int argc,char *argv[])
   printf("Node %d with largest in-degree is %d\n", NoMaxInD,maxInD);
   printf("Node %d with smallest(non-zero) in-degree is %d\n", NoMinInD,minInD);
 
-  BFS(&mygraph,NoMinOutD,NoMaxOutD);// breadth first search
-  DFS(&mygraph,NoMinOutD,NoMaxOutD);// depth first search
+
+  heuristics(&mygraph);
 
   return(0);
 }

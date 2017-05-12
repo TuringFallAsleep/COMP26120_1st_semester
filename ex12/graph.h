@@ -36,6 +36,7 @@ extern void print_graph (Graph *mygraph);
 extern int *dijkastraShortestPaths(Graph* mygraph, int v);
 extern void heapInsert(int *distance, int *Q, int index);
 extern int heapRemoveMin(int *Q, int *distance);
+extern void heuristics(Graph *mygraph);
 
 
 
