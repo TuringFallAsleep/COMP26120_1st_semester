@@ -56,10 +56,10 @@ int heapRemoveMin(int *Q,int *distance)
   Q[0] = Q[n];
   // printf("Q[n] = Q[%d] = %d\n",n,Q[n]);
   n--;
-  int i = 1;
+  int i = 0;
   while(i<n)
   {
-    if (2*i+1<=n)
+    if (2*i+1<=n) // this node has two internal children
     {
       if ( distance[i]>0 && distance[i]<=distance[2*i] && distance[i]<=distance[2*i+1])
         return temp;
@@ -67,7 +67,7 @@ int heapRemoveMin(int *Q,int *distance)
       {
         if (distance[2*i]>0 && distance[2*i]<=distance[2*i+1])
           j = 2*i;
-        else
+        if (distance[2*i+1]>0 && distance[2*i]>distance[2*i+1])
           j = 2*i+1;
         int t = Q[i];
         Q[i] = Q[j];
@@ -75,13 +75,13 @@ int heapRemoveMin(int *Q,int *distance)
         i = j;
       }
     }
-    else
+    else // this node has zero or one internal child
     {
-      if (2*i<=n)
+      if (2*i<=n) // has one internal node (the last one)
       {
         if (distance[2*i]>0 && distance[i]>distance[2*i])
         {
-          int t = distance[i];
+          int t = Q[i];
           Q[i] = Q[2*i];
           Q[2*i] = t;
         }
@@ -163,13 +163,12 @@ int* dijkastraShortestPaths(Graph* mygraph, int v){
       }
       for (int i = 0; i < mygraph->MaxSize; ++i)
       {
-        printf("Q[%d] = %d\n",i,Q[i]);
+        if(Q[i]!=-1)
+          printf("Q[%d] = %d\n",i,Q[i]);
         // printf("distance[%d] = %d\n",i,distance[i]);
       } 
     }while(Q[0]!=-1 && n>0);
     noUse = heapRemoveMin(Q,distance);
-
-
   }
 
   
@@ -183,8 +182,7 @@ int* dijkastraShortestPaths(Graph* mygraph, int v){
   // {
   //   Q[i] = -1;
   // }
-  
-  
+  printf("This is noUse %d\n", noUse);
   return distance;
 
 }
@@ -250,30 +248,30 @@ int main(int argc,char *argv[])
   int largest = 0;
   for (int i = 1; i < mygraph.MaxSize; i++)
   {
-    nodeDistance[4] = dijkastraShortestPaths(&mygraph,4);
+    nodeDistance[i] = dijkastraShortestPaths(&mygraph,i);
   }
 
-  // for (int i = 1; i < mygraph.MaxSize; i++)
-  // {
-  //   for (int j = 1; j < mygraph.MaxSize; j++)
-  //   {
-  //     printf("node %d to node %d has a distance %d.\n",i,j, nodeDistance[i][j] );
-  //     if (nodeDistance[i][j]>6 && nodeDistance[i][j]!=mygraph.MaxSize)
-  //       printf("node %d to node %d has a distance larger than 6.\n",i,j );
-  //     if (nodeDistance[i][j]!=mygraph.MaxSize)
-  //     {
-  //       sumDistance += nodeDistance[i][j];
-  //     }
+  for (int i = 1; i < mygraph.MaxSize; i++)
+  {
+    for (int j = 1; j < mygraph.MaxSize; j++)
+    {
+      printf("node %d to node %d has a distance %d.\n",i,j, nodeDistance[i][j] );
+      if (nodeDistance[i][j]>6 && nodeDistance[i][j]!=mygraph.MaxSize)
+        printf("node %d to node %d has a distance larger than 6.\n",i,j );
+      if (nodeDistance[i][j]!=mygraph.MaxSize)
+      {
+        sumDistance += nodeDistance[i][j];
+      }
       
-  //     if (nodeDistance[i][j]>largest && nodeDistance[i][j]!=mygraph.MaxSize)
-  //       largest = nodeDistance[i][j];
-  //   }
-  // }
+      if (nodeDistance[i][j]>largest && nodeDistance[i][j]!=mygraph.MaxSize)
+        largest = nodeDistance[i][j];
+    }
+  }
 
-  // double averageDistance = sumDistance/(mygraph.MaxSize-1)/(mygraph.MaxSize-2);
-  // printf("Total distance is %f.\n", sumDistance);
-  // printf("Average distance is %f.\n", averageDistance);
-  // printf("Largest distance is %d\n", largest);
+  double averageDistance = sumDistance/(mygraph.MaxSize-1)/(mygraph.MaxSize-2);
+  printf("Total distance is %f.\n", sumDistance);
+  printf("Average distance is %f.\n", averageDistance);
+  printf("Largest distance is %d\n", largest);
   
 
   return(0);
