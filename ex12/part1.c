@@ -10,41 +10,43 @@ int n=0;
 
 int* getInDegree(Graph *mygraph)
 {
-	int *indegree = malloc(sizeof(int)*(mygraph->MaxSize));
-	for (int i = 1; i < mygraph->MaxSize; i++)
-	{
-		indegree[i] = 0;
-	}
-	for (int i = 1; i < mygraph->MaxSize; i++)
-	{
-		List* list = mygraph->table[i].outlist;
-		if (!list)
-		{
-			continue;
-		}
-		while(list)
-		{
-			indegree[list->index]++;
-			list = list->next;
-		}
-	}
-	return indegree;
+  int *indegree = malloc(sizeof(int)*(mygraph->MaxSize));
+  for (int i = 1; i < mygraph->MaxSize; i++)
+  {
+    indegree[i] = 0;
+  }
+  for (int i = 1; i < mygraph->MaxSize; i++)
+  {
+    List* list = mygraph->table[i].outlist;
+    if (!list)
+    {
+      continue;
+    }
+    while(list)
+    {
+      indegree[list->index]++;
+      list = list->next;
+    }
+  }
+  return indegree;
 }
 
 
 void heapInsert(int *distance, int *Q, int index)
 {
   printf("insert %d\n", index);
-  Q[n++] = index;
+  n++;
+  Q[n-1] = index;
   int i = n;
   int temp;
-  while(i>1 && distance[(int)i/2]>distance[i])
+  while(i>1 && distance[(int)i/2-1]>distance[i-1])
   {
-    temp = Q[(int)i/2];
-    Q[(int)i/2] = Q[i];
-    Q[i] = temp;
+    temp = Q[(int)i/2-1];
+    Q[(int)i/2-1] = Q[i-1];
+    Q[i-1] = temp;
     i = (int)i/2;
   }
+  
 }
 
 int heapRemoveMin(int *Q,int *distance)
@@ -56,34 +58,34 @@ int heapRemoveMin(int *Q,int *distance)
   Q[0] = Q[n];
   // printf("Q[n] = Q[%d] = %d\n",n,Q[n]);
   n--;
-  int i = 0;
+  int i = 1;
   while(i<n)
   {
     if (2*i+1<=n) // this node has two internal children
     {
-      if ( distance[i]>0 && distance[i]<=distance[2*i] && distance[i]<=distance[2*i+1])
+      if ( distance[i-1]>0 && distance[i-1]<=distance[2*i-1] && distance[i-1]<=distance[2*i])
         return temp;
       else
       {
-        if (distance[2*i]>0 && distance[2*i]<=distance[2*i+1])
+        if (distance[2*i-1]>0 && distance[2*i-1]<=distance[2*i])
+          j = 2*i-1;
+        if (distance[2*i]>0 && distance[2*i-1]>distance[2*i])
           j = 2*i;
-        if (distance[2*i+1]>0 && distance[2*i]>distance[2*i+1])
-          j = 2*i+1;
-        int t = Q[i];
-        Q[i] = Q[j];
+        int t = Q[i-1];
+        Q[i-1] = Q[j];
         Q[j] = t;
-        i = j;
+        i = j+1;
       }
     }
     else // this node has zero or one internal child
     {
       if (2*i<=n) // has one internal node (the last one)
       {
-        if (distance[2*i]>0 && distance[i]>distance[2*i])
+        if (distance[2*i-1]>0 && distance[i-1]>distance[2*i-1])
         {
-          int t = Q[i];
-          Q[i] = Q[2*i];
-          Q[2*i] = t;
+          int t = Q[i-1];
+          Q[i-1] = Q[2*i-1];
+          Q[2*i-1] = t;
         }
         return temp;
       }
@@ -197,7 +199,7 @@ int main(int argc,char *argv[])
 
   read_graph(&mygraph,argv[1]);
   // print_graph(&mygraph);
-  	
+    
 
   /* you take it from here */
   int maxOutD = 0;
@@ -213,29 +215,29 @@ int main(int argc,char *argv[])
    
   for (int i=1;i<mygraph.MaxSize;i++)
   {
-  	if(mygraph.table[i].outdegree > maxOutD)
-  	{
-  		maxOutD = mygraph.table[i].outdegree;
-  		NoMaxOutD = i;
-  	}
+    if(mygraph.table[i].outdegree > maxOutD)
+    {
+      maxOutD = mygraph.table[i].outdegree;
+      NoMaxOutD = i;
+    }
 
     if(mygraph.table[i].outdegree < minOutD && mygraph.table[i].outdegree > 0)
     {
       minOutD = mygraph.table[i].outdegree;
       NoMinOutD = i;
     }
-  		
-  	if(inDegree[i]>maxInD)
-  	{
-  		maxInD = inDegree[i];
-  		NoMaxInD = i;
-  	}
-  		
-  	if (inDegree[i]<minInD && inDegree[i]>0)
-  	{
-  		minInD = inDegree[i];
-  		NoMinInD = i;
-  	}		
+      
+    if(inDegree[i]>maxInD)
+    {
+      maxInD = inDegree[i];
+      NoMaxInD = i;
+    }
+      
+    if (inDegree[i]<minInD && inDegree[i]>0)
+    {
+      minInD = inDegree[i];
+      NoMinInD = i;
+    }   
   }
 
   printf("Node %d with largest out-degree: %d\n", NoMaxOutD,maxOutD);
