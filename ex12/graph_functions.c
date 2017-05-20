@@ -12,6 +12,7 @@ int initialize_graph (Graph *mygraph, int MaxSize)
     strcpy(mygraph->table[i].name, "initialize");
   } 
   mygraph->MaxSize = MaxSize;
+  mygraph->table[0].outdegree = -1;
   return 1;
 }
 int insert_graph_node (Graph *mygraph, int n, char *name) 

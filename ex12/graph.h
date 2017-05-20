@@ -37,8 +37,7 @@ extern int *dijkastraShortestPaths(Graph* mygraph, int v);
 extern void heapInsert(int *distance, int *Q, int index);
 extern int heapRemoveMin(int *Q, int *distance);
 extern void heuristics(Graph *mygraph);
-
-
+extern int* heuristicShortestPaths(Graph* mygraph, int v);
 
 extern void BFS (Graph *mygraph, int sNode, int lNode);
 extern void DFS (Graph *mygraph, int sNode, int lNode);
